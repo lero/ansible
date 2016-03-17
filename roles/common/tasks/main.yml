@@ -1,0 +1,75 @@
+---
+# file: roles/common/tasks/main.yml
+
+- name: create gms and zenaide user
+  user: name={{ item }} shell=/bin/bash
+  with_items: users
+  tags: users
+
+- file: path=/home/{{ item }}/.ssh state=directory mode=0700 owner={{ item }} group={{ item }}
+  with_items: users
+  tags: users
+
+- copy: src=home/{{ item }}/.ssh/id_rsa dest=/home/{{ item }}/.ssh/ owner={{ item }} group={{ item }} mode=0600
+  with_items: users
+  tags: users
+
+- copy: src=home/{{ item }}/.ssh/authorized_keys dest=/home/{{ item }}/.ssh/ owner={{ item }} group={{ item }} mode=0600
+  with_items: users
+  tags: users
+
+- name: copy common sudoers
+  copy: src=etc/sudoers dest=/etc/sudoers owner=root group=root mode=0440
+  when: inventory_hostname not in groups['enff'] and
+    (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')
+  tags: sudo
+    
+- name: copy enff sudoers
+  copy: src=etc/sudoers.enff dest=/etc/sudoers owner=root group=root mode=0440
+  when: inventory_hostname in groups['enff']
+  tags: sudo
+
+- name: copy zimbra sudoers
+  copy: src=etc/sudoers.zimbra dest=/etc/sudoers owner=root group=root mode=0440
+  when: inventory_hostname == 'loca_zimbra'
+  tags: sudo
+
+- name: copy debian sources.list
+  copy: src=etc/apt/sources.list.{{ ansible_distribution_major_version|int }} dest=/etc/apt/sources.list owner=root group=root mode=0644
+  when: ansible_distribution == 'Debian'
+  tags: update
+
+- name: copy ubuntu sources.list
+  copy: src=etc/apt/sources.list.{{ ansible_distribution_major_version|int }} dest=/etc/apt/sources.list owner=root group=root mode=0644
+  when: ansible_distribution == 'Ubuntu'
+  tags: update
+
+- name: update debian and ubuntu
+  apt: update_cache=yes upgrade=dist
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  tags: update
+
+- name: update centos
+  yum: name=* state=latest
+  when: ansible_distribution == 'CentOS'
+  tags: update
+
+- name: be sure ntp is installed on CentOS
+  yum: pkg=ntp state=installed
+  when: ansible_distribution == 'CentOS'
+  tags: ntp
+
+- name: be sure ntp is installed on Debian/Ubuntu
+  apt: pkg=ntp state=installed
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  tags: ntp
+
+- name: check if ntpd is started and is enabled
+  service: name=ntpd state=started enabled=yes
+  when: ansible_distribution == 'CentOS'
+  tags: ntp
+
+- name: check if ntpd is started and is enabled
+  service: name=ntp state=started enabled=yes
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  tags: ntp

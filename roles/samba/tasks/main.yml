@@ -1,0 +1,26 @@
+---
+# file: roles/samba/tasks/main.yml
+
+- name: install samba
+  apt: name=samba update_cache=yes state=latest
+
+- name: copy smb.conf file
+  copy: src=etc/samba/smb.conf.{{ inventory_hostname }} dest=/etc/samba/smb.conf owner=root group=root mode=0640
+  notify: 
+    - restart samba
+  tags: samba
+
+- name: check if samba is running and is enabled (Ubuntu)
+  service: name=samba state=running enabled=yes
+  when: ansible_distribution == 'Ubuntu'
+  tags: samba 
+
+- name: check if nmbd is running and is enabled (Debian)
+  service: name=nmbd state=running enabled=yes
+  when: ansible_distribution == 'Debian'
+  tags: samba 
+
+- name: check if smbd is running and is enabled (Debian)
+  service: name=smbd state=running enabled=yes
+  when: ansible_distribution == 'Debian'
+  tags: samba 

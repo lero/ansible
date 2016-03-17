@@ -1,0 +1,8 @@
+---
+# file: roles/apache/vars/main.yml
+
+domains_mst:
+    - {servername: "coptec.org.br", documentroot: "/data/coptec/public_html"} 
+
+domains_bdf:
+    - {servername: "chalala.org.br", documentroot: "/data/chalala"} 

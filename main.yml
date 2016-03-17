@@ -1,0 +1,22 @@
+---
+# file: main.yml
+
+- hosts: all
+  roles:
+    - common
+
+- hosts: squid
+  roles:
+    - squid
+
+- hosts: asterisk
+  roles:
+    - asterisk
+
+- hosts: samba
+  roles:
+    - samba
+
+- hosts: apache
+  roles:
+    - apache

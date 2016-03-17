@@ -1,0 +1,18 @@
+
+{% for vhost in domains %}
+<VirtualHost *:80>
+  ServerName {{ vhost.servername }}
+  ServerAlias www.{{ vhost.servername }}
+  DocumentRoot {{ vhost.documentroot }}
+  ErrorLog /var/log/apache2/{{ vhost.servername }}-error.log
+  CustomLog /var/log/apache2/{{ vhost.servername }}-access.log common
+  <Directory "{{ vhost.documentroot }}">
+    AllowOverride All
+    Require all granted
+    Options -Indexes FollowSymLinks
+    Order allow,deny
+    Allow from all
+  </Directory>
+</VirtualHost>
+
+{% endfor %}

@@ -1,0 +1,5 @@
+---
+# file: roles/squid/handlers/main.yml
+
+- name: restart squid 
+  service: name=squid3 state=restarted

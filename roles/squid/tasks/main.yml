@@ -1,0 +1,15 @@
+---
+# file: roles/squid/tasks/main.yml
+
+- name: install squid3
+  apt: name=squid3 update_cache=yes state=latest
+
+- name: copy squid.conf file
+  copy: src=etc/squid3/squid.conf.{{ inventory_hostname }} dest=/etc/squid3/squid.conf owner=root group=root mode=0640
+  notify: 
+    - restart squid
+  tags: squid
+
+- name: check if squid is running and is enabled
+  service: name=squid3 state=running enabled=yes
+  tags: squid

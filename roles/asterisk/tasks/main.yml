@@ -1,0 +1,68 @@
+---
+# file: roles/asterisk/tasks/main.yml
+
+# TODO -> copy extensions.d, sip.d, wav files and simplify
+
+- name: copy sip.conf file
+  copy: src=etc/asterisk/sip.conf.{{ inventory_hostname }} dest=/etc/asterisk/sip.conf owner=root group=root mode=0640
+  notify: 
+    - restart asterisk
+  tags: asterisk
+
+- name: copy extensions.conf file
+  copy: src=etc/asterisk/extensions.conf.{{ inventory_hostname }} dest=/etc/asterisk/extensions.conf owner=root group=root mode=0640
+  notify: 
+    - restart asterisk
+  tags: asterisk
+
+- name: copy iax.conf file
+  copy: src=etc/asterisk/iax.conf.{{ inventory_hostname }} dest=/etc/asterisk/iax.conf owner=root group=root mode=0640
+  notify: 
+    - restart asterisk
+  tags: asterisk
+
+- name: copy modules.conf file
+  copy: src=etc/asterisk/modules.conf dest=/etc/asterisk/modules.conf owner=root group=root mode=0640
+  notify: 
+    - restart asterisk
+  tags: asterisk
+
+- name: copy ari.conf file
+  copy: src=etc/asterisk/ari.conf dest=/etc/asterisk/ari.conf owner=root group=root mode=0640
+  notify: 
+    - restart asterisk
+  tags: asterisk
+
+# just for bdf_voip
+- name: copy voicemail.conf file
+  copy: src=etc/asterisk/voicemail.conf.{{ inventory_hostname }} dest=/etc/asterisk/voicemail.conf owner=root group=root mode=0640
+  notify: 
+    - restart asterisk
+  tags: asterisk
+  when: inventory_hostname == 'bdf_voip'
+
+- name: copy queues.conf file
+  copy: src=etc/asterisk/queues.conf.{{ inventory_hostname }} dest=/etc/asterisk/queues.conf owner=root group=root mode=0640
+  notify: 
+    - restart asterisk
+  tags: asterisk
+  when: inventory_hostname == 'bdf_voip'
+
+- name: copy digivoice.conf file
+  copy: src=etc/asterisk/digivoice.conf.{{ inventory_hostname }} dest=/etc/asterisk/digivoice.conf owner=root group=root mode=0640
+  notify: 
+    - restart asterisk
+  tags: asterisk
+  when: inventory_hostname == 'bdf_voip'
+
+# just for enff_voip
+- name: copy voicemail.conf file
+  copy: src=etc/asterisk/voicemail.conf.{{ inventory_hostname }} dest=/etc/asterisk/voicemail.conf owner=root group=root mode=0640
+  notify: 
+    - restart asterisk
+  tags: asterisk
+  when: inventory_hostname == 'enff_voip'
+
+- name: check if asterisk is running and is enabled
+  service: name=asterisk state=running enabled=yes
+  tags: asterisk

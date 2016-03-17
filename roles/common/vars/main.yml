@@ -1,0 +1,6 @@
+---
+# file: roles/common/vars/main.yml
+
+users:
+    - zenaide
+    - gms

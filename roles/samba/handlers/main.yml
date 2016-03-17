@@ -1,0 +1,14 @@
+---
+# file: roles/samba/handlers/main.yml
+
+- name: restart samba
+  service: name=samba state=restarted
+  when: ansible_distribution == 'Ubuntu'
+
+- name: restart nmbd
+  service: name=nmbd state=restarted
+  when: ansible_distribution == 'Debian'
+
+- name: restart smbd
+  service: name=smbd state=restarted
+  when: ansible_distribution == 'Debian'

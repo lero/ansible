@@ -1,0 +1,5 @@
+---
+# file: roles/asterisk/handlers/main.yml
+
+- name: restart asterisk 
+  service: name=asterisk state=restarted

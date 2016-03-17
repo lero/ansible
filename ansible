@@ -1,0 +1,1 @@
+ansible-playbook -b -i hosts main.yml -v -t update -u gms

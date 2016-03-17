@@ -1,0 +1,22 @@
+---
+# file: roles/apache/tasks/main.yml
+
+- name: install apache
+  apt: name=apache2 update_cache=yes state=latest
+
+- name: create loca_mst apache virtual host files
+  template: src=etc/apache2/sites-available/vhost.conf.j2 dest=/etc/apache2/sites-available/{{ item.servername }}.conf
+  when: inventory_hostname == 'loca_mst'
+  with_items: 
+    - "{{domains_mst}}"
+  tags: apache
+
+- name: create loca_bdf apache virtual host files
+  template: src=etc/apache2/sites-available/vhost.conf.j2 dest=/etc/apache2/sites-available/{{ item.servername }}.conf
+  when: inventory_hostname == 'loca_bdf'
+  with_items: 
+    - "{{domains_bdf}}"
+  tags: apache
+
+- name: check if apache is running and is enabled
+  service: name=apache2 state=running enabled=yes
